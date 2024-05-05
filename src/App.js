@@ -1,23 +1,26 @@
-import Table from './Table';
-
-const Fruit = ({fav,papapa,something}) => {
-	//console.log(props);
+const Fruit = ({ name,img }) => {
 	return (
 		<>
-			<h3>좋아하는 과일: {fav}</h3>
-			<h3>{papapa}</h3>
-			<h3>{something.toString()}</h3>
+			<h3>좋아하는 과일: {name}</h3>
+			<img src={img} alt={name} />
 		</>
 	);
 };
+const fruitDB = [
+	{ name: 'banana ', image: 'http://qwerew.cafe24.com/images/banana.png' },
+	{ name: 'orange', image: 'http://qwerew.cafe24.com/images/orange.png' },
+	{ name: 'apple', image: 'http://qwerew.cafe24.com/images/apple.png' },
+	{ name: 'melon', image: 'http://qwerew.cafe24.com/images/melon.jpg' },
+];
 
 function App() {
 	return (
 		<div>
 			<h1>도레미레시피앱</h1>
-			<Fruit fav='바나나' something={true} papapa={['hello', 1, 2, 3]} />
-			<Fruit fav='딸기' something={false} papapa={['바이바이', 1, 2, 3]} />
-			<Fruit fav='수박' something={true} papapa={['hello', 1, 2, 3]} />
+			{fruitDB.map((value,index) => {
+				console.log('value',value);
+				return <Fruit key={index} name={value.name} img={value.image}/>;
+			})}
 		</div>
 	);
 }
