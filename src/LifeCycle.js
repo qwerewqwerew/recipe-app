@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
+
 const UnMount = () => {
-	console.log('타이머준비중');
+	console.log('타이머 준비중');
 	useEffect(() => {
 		const timer = setInterval(() => {
-			console.log('타이머진행중');
+			console.log('타이머 진행중');
 		}, 1000);
-		return () => {
-			clearInterval(timer);
-		};
-	}, []);
-	return <p>타이머 진행중</p>;
+		return ()=>{
+			clearInterval(timer)
+		}
+	},[]);
+	return <p>타이머진행중</p>;
 };
 
 const LifeCycle = () => {
@@ -21,7 +22,7 @@ const LifeCycle = () => {
 		console.log('마운트됨');
 	}, []);
 	useEffect(() => {
-		console.log('리랜더됨');
+		console.log('리렌더됨');
 	});
 	useEffect(() => {
 		console.log('업데이트됨');
@@ -30,44 +31,17 @@ const LifeCycle = () => {
 	return (
 		<>
 			<h1>
-				mount:{mount}
-				<button
-					onClick={() =>
-						setMount((mount) => {
-							return mount + 1;
-						})
-					}
-				>
-					click
-				</button>
+				mount:{mount} <button onClick={() => setMount(mount + 1)}>click</button>
 			</h1>
 			<h1>
-				rerender:{rerender}
-				<button
-					onClick={() =>
-						setreRender((reRender) => {
-							return reRender + 1;
-						})
-					}
-				>
-					click
-				</button>
+				rerender:{rerender} <button onClick={() => setreRender(rerender + 1)}>click</button>
 			</h1>
 			<h1>
-				update:{update}
-				<button
-					onClick={() =>
-						setUpdate((update) => {
-							return update + 1;
-						})
-					}
-				>
-					click
-				</button>
+				update:{update} <button onClick={() => setUpdate(update + 1)}>click</button>
 			</h1>
 			<div>
-				{!stop ? <UnMount /> : '타이머준비중'}
-				<button onClick={() => setStop(!stop)}>stop</button>
+				{!stop?<UnMount />:"타이머 준비중"}
+				<button onClick={()=>setStop(!stop)}>stop</button>
 			</div>
 		</>
 	);
