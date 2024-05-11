@@ -1,30 +1,14 @@
-import LifeCycle from './LifeCycle';
-const fruitDB = [
-	{ name: 'banana ', image: 'http://qwerew.cafe24.com/images/banana.png' },
-	{ name: 'orange', image: 'http://qwerew.cafe24.com/images/orange.png' },
-	{ name: 'apple', image: 'http://qwerew.cafe24.com/images/apple.png' },
-	{ name: 'melon', image: 'http://qwerew.cafe24.com/images/melon.jpg' },
-];
-
-const Fruit = ({ name, img }) => {
-	return (
-		<>
-			<h3>좋아하는 과일: {name}</h3>
-			<img src={img} alt={name} />
-		</>
-	);
-};
-
+import { useState, useEffect } from 'react';
 function App() {
-	return (
-		<div>
-			<h1>도레미레시피앱</h1>
-			<LifeCycle />
-			{fruitDB.map((value, index) => {
-				return <Fruit key={index} name={value.name} img={value.image} />;
-			})}
-		</div>
-	);
+	const [loading, setLoading] = useState(true);
+	const [data, setDate] = useState([]);
+	useEffect(() => {
+		//데이터로딩
+		setTimeout(() => {
+			setLoading(false);
+		}, 1000);
+	}, []);
+	return <div className='App'>{loading && <h1>로딩중입니다...</h1>}</div>;
 }
 
 export default App;
