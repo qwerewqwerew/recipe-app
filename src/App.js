@@ -4,7 +4,7 @@ function App() {
 	const [loading, setLoading] = useState({ state: true, data: [] });
 	const getDB = async () => {
 		try {
-			const { data } = await axios.get('http://openapi.foodsafetykorea.go.kr/api/08cc9b42270a4439b1b5/COOKRCP01/json/1/5');
+			const { data } = await axios.get('http://openapi.foodsafetykorea.go.kr/api/서비스키/COOKRCP01/json/1/5');
 			const {
 				COOKRCP01: { row },
 			} = data;
