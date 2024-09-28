@@ -1,42 +1,40 @@
-import axios from 'axios';
-import { useState, useEffect } from 'react';
+import axios from "axios";
+import { useState, useEffect } from "react";
+import ListGroup from "./components/ListGroup";
 function App() {
-	const [loading, setLoading] = useState({ state: true, data: [] });
-	const getDB = async () => {
-		try {
-			const { data } = await axios.get('http://openapi.foodsafetykorea.go.kr/api/서비스키/COOKRCP01/json/1/5');
-			const {
-				COOKRCP01: { row },
-			} = data;
-			setLoading({ state: false, data: row });
-			console.log(row);
-		} catch (error) {
-			console.error(error);
-		}
-	};
-	useEffect(() => {
-		getDB();
-	}, []);
+  const [loading, setLoading] = useState({ state: true, data: [] });
+  const getDB = async () => {
+    try {
+      const { data } = await axios.get(`http://openapi.foodsafetykorea.go.kr/api/내서비스키/COOKRCP01/json/1/100`);
+      const {
+        COOKRCP01: { row },
+      } = data;
+      const initData = row.map(({ RCP_SEQ, RCP_NM, RCP_WAY2, ATT_FILE_NO_MAIN }) => ({
+        RCP_SEQ,
+        RCP_NM,
+        RCP_WAY2,
+        ATT_FILE_NO_MAIN,
+      }));
+      setLoading({ state: false, data: initData });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    getDB();
+  }, []);
 
-	return (
-		<div className='App'>
-			{loading.state ? (
-				<h1>로딩중입니다...</h1>
-			) : (
-				loading.data.map((el) => (
-					<div key={el.RCP_SEQ}>
-						<span style={{ color: 'red' }}>레시피명: {el.RCP_NM}</span>
-						<span>조리방법: {el.RCP_WAY2}</span>
-						<div>
-							<span>{el.MANUAL01}</span>
-							<span>{el.MANUAL02}</span>
-							<span>{el.MANUAL03}</span>
-						</div>
-					</div>
-				))
-			)}
-		</div>
-	);
+  return (
+    <div className="App">
+      {loading.state ? (
+        <h1>로딩중입니다...</h1>
+      ) : (
+        <div className="inner">
+          <ListGroup data={loading.data} />
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default App;
