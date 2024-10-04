@@ -1,39 +1,73 @@
-import axios from "axios";
-import { useState, useEffect } from "react";
-import ListGroup from "./components/ListGroup";
-function App() {
-  const [loading, setLoading] = useState({ state: true, data: [] });
-  const getDB = async () => {
-    try {
-      const { data } = await axios.get(`http://openapi.foodsafetykorea.go.kr/api/내서비스키/COOKRCP01/json/1/100`);
-      const {
-        COOKRCP01: { row },
-      } = data;
-      const initData = row.map(({ RCP_SEQ, RCP_NM, RCP_WAY2, ATT_FILE_NO_MAIN }) => ({
-        RCP_SEQ,
-        RCP_NM,
-        RCP_WAY2,
-        ATT_FILE_NO_MAIN,
-      }));
-      setLoading({ state: false, data: initData });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  useEffect(() => {
-    getDB();
-  }, []);
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import axios from 'axios';
 
+import { ThemeProvider } from './ThemeContext';
+// 수정
+import Root from './pages/Root';
+import Home from './pages/Home';
+import Category from './pages/Category';
+import Detail from './pages/Detail';
+
+const KEY = process.env.REACT_APP_KEY;
+
+// router setting ////////////////////
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Root />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+        loader: async () => {
+          try {
+            const { data } = await axios.get(`http://openapi.foodsafetykorea.go.kr/api/${KEY}/COOKRCP01/json/1/30`);
+            const {
+              COOKRCP01: { row },
+            } = data;
+            return row;
+          } catch (error) {
+            console.error(error);
+          }
+        },
+      },
+      {
+        path: 'category',
+        element: <Category />,
+        loader: async () => {
+          try {
+            const { data } = await axios.get(`http://openapi.foodsafetykorea.go.kr/api/${KEY}/COOKRCP01/json/1/50`);
+            const {
+              COOKRCP01: { row },
+            } = data;
+
+            return row;
+          } catch (error) {
+            console.error(error);
+          }
+        },
+      },
+      {
+        path: ':id',
+        element: <Detail />,
+        loader: async ({ request, params }) => {
+          try {
+            const { data } = await axios.get(`http://openapi.foodsafetykorea.go.kr/api/${KEY}/COOKRCP01/json/1/1/RCP_NM=${params.id}`);
+            return data.COOKRCP01.row[0];
+          } catch (error) {
+            console.error(error);
+          }
+        },
+      },
+    ],
+  },
+]);
+
+function App() {
   return (
-    <div className="App">
-      {loading.state ? (
-        <h1>로딩중입니다...</h1>
-      ) : (
-        <div className="inner">
-          <ListGroup data={loading.data} />
-        </div>
-      )}
-    </div>
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
   );
 }
 
