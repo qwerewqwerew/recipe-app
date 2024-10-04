@@ -1,42 +1,74 @@
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import axios from 'axios';
-import { useState, useEffect } from 'react';
-function App() {
-	const [loading, setLoading] = useState({ state: true, data: [] });
-	const getDB = async () => {
-		try {
-			const { data } = await axios.get('http://openapi.foodsafetykorea.go.kr/api/서비스키/COOKRCP01/json/1/5');
-			const {
-				COOKRCP01: { row },
-			} = data;
-			setLoading({ state: false, data: row });
-			console.log(row);
-		} catch (error) {
-			console.error(error);
-		}
-	};
-	useEffect(() => {
-		getDB();
-	}, []);
 
-	return (
-		<div className='App'>
-			{loading.state ? (
-				<h1>로딩중입니다...</h1>
-			) : (
-				loading.data.map((el) => (
-					<div key={el.RCP_SEQ}>
-						<span style={{ color: 'red' }}>레시피명: {el.RCP_NM}</span>
-						<span>조리방법: {el.RCP_WAY2}</span>
-						<div>
-							<span>{el.MANUAL01}</span>
-							<span>{el.MANUAL02}</span>
-							<span>{el.MANUAL03}</span>
-						</div>
-					</div>
-				))
-			)}
-		</div>
-	);
+import { ThemeProvider } from './ThemeContext';
+// 수정
+import Root from './pages/Root';
+import Home from './pages/Home';
+import Category from './pages/Category';
+import Detail from './pages/Detail';
+
+const KEY = process.env.REACT_APP_KEY;
+
+// router setting ////////////////////
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Root />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+        loader: async () => {
+          try {
+            const { data } = await axios.get(`http://openapi.foodsafetykorea.go.kr/api/${KEY}/COOKRCP01/json/1/30`);
+            const {
+              COOKRCP01: { row },
+            } = data;
+            return row;
+          } catch (error) {
+            console.error(error);
+          }
+        },
+      },
+      {
+        path: 'category',
+        element: <Category />,
+        loader: async () => {
+          try {
+            const { data } = await axios.get(`http://openapi.foodsafetykorea.go.kr/api/${KEY}/COOKRCP01/json/1/50`);
+            const {
+              COOKRCP01: { row },
+            } = data;
+
+            return row;
+          } catch (error) {
+            console.error(error);
+          }
+        },
+      },
+      {
+        path: ':id',
+        element: <Detail />,
+        loader: async ({ request, params }) => {
+          try {
+            const { data } = await axios.get(`http://openapi.foodsafetykorea.go.kr/api/${KEY}/COOKRCP01/json/1/1/RCP_NM=${params.id}`);
+            return data.COOKRCP01.row[0];
+          } catch (error) {
+            console.error(error);
+          }
+        },
+      },
+    ],
+  },
+]);
+
+function App() {
+  return (
+    <ThemeProvider>
+      <RouterProvider router={router} />
+    </ThemeProvider>
+  );
 }
 
 export default App;
